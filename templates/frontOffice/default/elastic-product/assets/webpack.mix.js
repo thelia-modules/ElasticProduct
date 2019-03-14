@@ -18,13 +18,6 @@ mix.setPublicPath("dist");
 
 mix.js("src/js/app.js", "dist/js");
 
-// mix.scripts(
-//     "src/js/standalone/outdatedbrowser.js",
-//     "dist/js/standalone/outdatedbrowser.js"
-// );
-
-mix.copy("src/js/lib", "dist/js/lib", false);
-
 mix.sass("src/scss/app.scss", "dist/css").options({
     processCssUrls: false,
     postCss: [

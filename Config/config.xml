@@ -32,10 +32,6 @@
         <hook id="elasticproduct.search.html">
             <tag name="hook.event_listener" event="elastic_product.container" type="front" templates="render:elastic-product/esearch.html" />
         </hook>
-        <!--<hook id="elasticproduct.search.dependencies">-->
-            <!--<tag name="hook.event_listener" event="main.after-javascript-include" type="front" templates="render:elastic-product/dependencies.html" />-->
-        <!--</hook>-->
-
         <hook id="elasticproduct.search.css">
             <tag name="hook.event_listener" event="main.head-bottom"  type="front" templates="css:elastic-product/assets/dist/css/app.css" />
         </hook>
