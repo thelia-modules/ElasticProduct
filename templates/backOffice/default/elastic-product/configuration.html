@@ -1,0 +1,139 @@
+{extends file="admin-layout.tpl"}
+
+{block name="no-return-functions"}
+    {$admin_current_location = 'modules'}
+{/block}
+
+{block name="page-title"}{intl l='Modules'}{/block}
+
+{block name="check-resource"}module.ElasticProduct{/block}
+{block name="check-access"}view{/block}
+
+{block name="main-content"}
+    <div class="edit-module">
+        <div id="wrapper" class="container">
+            <ul class="breadcrumb">
+                <li><a href="{url path='/admin/home'}">{intl l="Home"}</a></li>
+                <li><a href="{url path='/admin/configuration'}">{intl l="Configuration"}</a></li>
+                <li>{intl l="ElasticProduct" d="elasticproduct.bo.default"}</li>
+            </ul>
+
+            <div class="row">
+                <div class="col-md-12 general-block-decorator">
+
+                {form name="elastic_product_configuration"}
+                    <form method="POST" action="{url path="/admin/module/ElasticProduct/configure"}">
+                        {form_hidden_fields form=$form}
+
+                        {form_field form=$form field='success_url'}
+                            <input type="hidden" name="{$name}" value="{url path='/admin/module/ElasticProduct'}" />
+                        {/form_field}
+
+                        {render_form_field form=$form field="host"}
+                        {render_form_field form=$form field="port"}
+                        {render_form_field form=$form field="username"}
+                        {render_form_field form=$form field="password"}
+                        {render_form_field form=$form field="index_prefix"}
+
+                        <input class="btn btn-success btn-block" type="submit">
+                    </form>
+                {/form}
+            </div>
+        </div>
+            <div class="row">
+                <div class="col-md-12 general-block-decorator">
+                    <div class="alert alert-warning">{intl l="After modifying this you will need to reindex all your catalog for apply changes." d="elasticproduct.bo.default"}</div>
+                    <div class="col-md-6">
+                        <h4>{intl l="Searchable features" d="elasticproduct.bo.default"}</h4>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-condensed table-left-aligned">
+                                <thead>
+                                    <tr>
+                                        <td>{intl l="Feature name" d="elasticproduct.bo.default"}</td>
+                                        <td>{intl l="Searchable" d="elasticproduct.bo.default"}</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {loop type="feature" name="feature"}
+                                        <tr>
+                                            <td>{$TITLE}</td>
+                                            <td>
+                                                <div class="switch-small searchable_switch" data-type="features" data-id="{$ID}"
+                                                     data-on="success" data-off="danger"
+                                                     data-on-label="<i class='glyphicon glyphicon-ok'></i>"
+                                                     data-off-label="<i class='glyphicon glyphicon-remove'></i>">
+                                                    <input type="checkbox" {if !in_array($ID, $unsearchableFeatures)}checked{/if}/>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {/loop}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>{intl l="Searchable attributes" d="elasticproduct.bo.default"}</h4>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-condensed table-left-aligned">
+                                <thead>
+                                    <tr>
+                                        <td>{intl l="Attribute name" d="elasticproduct.bo.default"}</td>
+                                        <td>{intl l="Searchable" d="elasticproduct.bo.default"}</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {loop type="attribute" name="attribute"}
+                                        <tr>
+                                            <td>{$TITLE}</td>
+                                            <td>
+                                                <div class="switch-small searchable_switch" data-type="attributes" data-id="{$ID}"
+                                                     data-on="success" data-off="danger"
+                                                     data-on-label="<i class='glyphicon glyphicon-ok'></i>"
+                                                     data-off-label="<i class='glyphicon glyphicon-remove'></i>">
+                                                    <input type="checkbox" {if !in_array($ID, $unsearchableAttributes)}checked{/if}/>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {/loop}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+{/block}
+{block name="javascript-initialization"}
+    {javascripts file='assets/js/bootstrap-switch/bootstrap-switch.js'}
+        <script src='{$asset_url}'></script>
+    {/javascripts}
+
+    <script>
+        $(function () {
+            var searchableSwitch = $(".searchable_switch");
+
+            searchableSwitch.bootstrapSwitch();
+
+            searchableSwitch.on("switch-change", function(e, data) {
+                var checkbox = $(this);
+                var isChecked = data.value;
+                var type = $(this).data('type');
+                var id = $(this).data('id');
+                var url = "{url path="/admin/module/elasticproduct/searchable/toggle"}"+"/"+type+"/"+id;
+                $(".searchable_switch").bootstrapSwitch('setActive',false);
+                {literal}
+                    $.post(url, {
+                        isSearchable : isChecked
+                    }).fail(function(data) {
+                        checkbox.bootstrapSwitch('toggleState', true);
+                    }).always(function() {
+                        $(".searchable_switch").bootstrapSwitch('setActive',true);
+                    });
+                {/literal}
+            });
+
+        });
+    </script>
+{/block}
+

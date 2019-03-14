@@ -1,0 +1,170 @@
+{
+  "properties": {
+    "features": {
+      "type": "nested"
+    },
+    "product_sale_elements": {
+      "type": "nested",
+      "properties": {
+        "attributes": {
+          "type": "nested"
+        },
+        "prices": {
+          "type": "nested"
+        }
+      }
+    }
+  },
+  "dynamic_templates": [
+    {
+      "english_templates": {
+        "path_match": "*.i18ns.en_US.*",
+        "mapping": {
+          "type": "text",
+          "fields": {
+            "raw": {
+              "type": "keyword"
+            },
+            "analyzed": {
+              "analyzer": "english_index",
+              "search_analyzer": "english_search",
+              "type": "text"
+            }
+          }
+        }
+      }
+    },
+    {
+      "french_templates": {
+        "path_match": "*.i18ns.fr_FR.*",
+        "mapping": {
+          "type": "text",
+          "fields": {
+            "raw": {
+              "type": "keyword"
+            },
+            "analyzed": {
+              "analyzer": "french_index",
+              "search_analyzer": "french_search",
+              "type": "text"
+            }
+          }
+        }
+      }
+    },
+    {
+      "ref":  {
+        "match": "ref",
+        "mapping": {
+          "type": "text"
+        }
+      }
+    },
+    {
+      "ean_code":  {
+        "match": "ean_code",
+        "mapping": {
+          "type": "text"
+        }
+      }
+    },
+    {
+      "is_visible":  {
+        "match": "is_visible",
+        "mapping": {
+          "type": "boolean"
+        }
+      }
+    },
+    {
+      "is_promo":  {
+        "match": "is_promo",
+        "mapping": {
+          "type": "boolean"
+        }
+      }
+    },
+    {
+      "is_new":  {
+        "match": "is_new",
+        "mapping": {
+          "type": "boolean"
+        }
+      }
+    },
+    {
+      "is_default":  {
+        "match": "is_default",
+        "mapping": {
+          "type": "boolean"
+        }
+      }
+    },
+    {
+      "id":  {
+        "match": "id",
+        "mapping": {
+          "type": "integer"
+        }
+      }
+    },
+    {
+      "position":  {
+        "match": "position",
+        "mapping": {
+          "type": "integer"
+        }
+      }
+    },
+    {
+      "parent":  {
+        "match": "parent",
+        "mapping": {
+          "type": "integer"
+        }
+      }
+    },
+    {
+      "quantity":  {
+        "match": "quantity",
+        "mapping": {
+          "type": "float"
+        }
+      }
+    },
+    {
+      "weight":  {
+        "match": "weight",
+        "mapping": {
+          "type": "float"
+        }
+      }
+    },
+    {
+      "prices":  {
+        "match": "*price",
+        "mapping": {
+          "type": "double"
+        }
+      }
+    },
+    {
+      "created_at":  {
+        "match": "created_at",
+        "mapping": {
+          "type": "date",
+          "format": "YYYY-MM-dd HH:mm:ss"
+        }
+      }
+    },
+    {
+      "updated_at":  {
+        "match": "updated_at",
+        "mapping": {
+          "type": "date",
+          "format": "YYYY-MM-dd HH:mm:ss"
+        }
+      }
+    }
+  ]
+}

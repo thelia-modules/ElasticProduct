@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<routes xmlns="http://symfony.com/schema/routing"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
+
+    <route id="elastic_product_configuration" path="/admin/module/ElasticProduct">
+        <default key="_controller">ElasticProduct\Controller\ConfigurationController::viewAction</default>
+    </route>
+    <route id="elastic_product_configuration_save" path="/admin/module/ElasticProduct/configure">
+        <default key="_controller">ElasticProduct\Controller\ConfigurationController::saveAction</default>
+    </route>
+
+    <route id="elastic_product_searchable_toggle" path="/admin/module/elasticproduct/searchable/toggle/{type}/{id}">
+        <default key="_controller">ElasticProduct\Controller\ConfigurationController::toggleSearchableAction</default>
+        <requirement key="id">\d+</requirement>
+    </route>
+
+    <route id="elastic_product_search" path="/esearch">
+        <default key="_controller">ElasticProduct\Controller\SearchController::searchAction</default>
+    </route>
+
+</routes>

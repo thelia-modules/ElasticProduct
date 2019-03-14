@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<config xmlns="http://thelia.net/schema/dic/config"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://thelia.net/schema/dic/config http://thelia.net/schema/dic/config/thelia-1.0.xsd">
+
+    <loops>
+        <!-- sample definition
+        <loop name="MySuperLoop" class="ElasticProduct\Loop\MySuperLoop" />
+        -->
+    </loops>
+
+    <forms>
+        <form name="elastic_product_configuration" class="ElasticProduct\Form\ConfigurationForm" />
+    </forms>
+
+    <commands>
+        <command class="ElasticProduct\Command\IndexBuildCommand" />
+        <command class="ElasticProduct\Command\IndexQueueCommand" />
+    </commands>
+
+    <services>
+        <service id="elastic_product.update.listener" class="ElasticProduct\EventListener\UpdateListener" scope="request">
+            <tag name="kernel.event_subscriber"/>
+        </service>
+        <service id="elastic_product.indexation.service" class="ElasticProduct\Service\IndexationService">
+            <argument type="service" id="event_dispatcher" />
+        </service>
+    </services>
+
+    <hooks>
+        <hook id="elasticproduct.search.html">
+            <tag name="hook.event_listener" event="elastic_product.container" type="front" templates="render:elastic-product/esearch.html" />
+        </hook>
+        <!--<hook id="elasticproduct.search.dependencies">-->
+            <!--<tag name="hook.event_listener" event="main.after-javascript-include" type="front" templates="render:elastic-product/dependencies.html" />-->
+        <!--</hook>-->
+
+        <hook id="elasticproduct.search.css">
+            <tag name="hook.event_listener" event="main.head-bottom"  type="front" templates="css:elastic-product/assets/dist/css/app.css" />
+        </hook>
+        <hook id="elasticproduct.search.js">
+            <tag name="hook.event_listener" event="main.javascript-initialization"  type="front" templates="js:elastic-product/assets/dist/js/app.js" />
+        </hook>
+    </hooks>
+
+    <!--
+    <exports>
+
+    </exports>
+    -->
+
+    <!--
+    <imports>
+
+    </imports>
+    -->
+</config>

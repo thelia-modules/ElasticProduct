@@ -1,0 +1,113 @@
+{
+  "analyzer": {
+    "english_index": {
+      "tokenizer": "index_tokenizer",
+      "filter": [
+        "lowercase",
+        "asciifolding",
+        "french_elision",
+        "stop_en"
+      ],
+      "char_filter": [
+        "hyphen_replace",
+        "html_strip"
+      ]
+    },
+    "english_search": {
+      "tokenizer": "whitespace",
+      "filter": [
+        "lowercase",
+        "asciifolding",
+        "french_elision",
+        "stop_en"
+      ],
+      "char_filter": [
+        "hyphen_replace",
+        "html_strip"
+      ]
+    },
+    "french_index": {
+      "tokenizer": "index_tokenizer",
+      "filter": [
+        "french_elision",
+        "icu_folding",
+        "lowercase"
+      ],
+      "char_filter": [
+        "hyphen_replace",
+        "html_strip"
+      ]
+    },
+    "french_search": {
+      "tokenizer": "whitespace",
+      "filter": [
+        "french_elision",
+        "icu_folding",
+        "lowercase"
+      ],
+      "char_filter": [
+        "hyphen_replace",
+        "html_strip"
+      ]
+    }
+  },
+  "tokenizer": {
+    "index_tokenizer": {
+      "type": "edge_ngram",
+      "min_gram": 2,
+      "max_gram": 20,
+      "token_chars": [
+        "letter",
+        "symbol",
+        "punctuation"
+      ]
+    }
+  },
+  "filter": {
+    "stop_fr": {
+      "type": "stop",
+      "stopwords": "_french_"
+    },
+    "stop_en": {
+      "type": "stop",
+      "stopwords": "_english"
+    },
+    "french_elision": {
+      "type": "elision",
+      "articles_case": true,
+      "articles": [
+        "l",
+        "m",
+        "t",
+        "qu",
+        "n",
+        "s",
+        "j",
+        "d",
+        "c",
+        "jusqu",
+        "quoiqu",
+        "lorsqu",
+        "puisqu"
+      ]
+    }
+  },
+  "char_filter": {
+    "hyphen_replace": {
+      "type": "mapping",
+      "mappings": [
+        "- => $",
+        "/ => $"
+      ]
+    }
+  },
+  "normalizer": {
+    "lowerasciinormalizer": {
+      "type": "custom",
+      "filter": [
+        "lowercase",
+        "asciifolding"
+      ]
+    }
+  }
+}
