@@ -1,6 +1,6 @@
 {
-  "name": "your-vendor/elastic-product-module",
-  "license": "LGPL-3.0-or-later",
+  "name": "thelia/elastic-product-module",
+  "license": "MIT",
   "type": "thelia-module",
   "require": {
     "thelia/installer": "~1.1",
