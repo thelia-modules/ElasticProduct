@@ -1,4 +1,10 @@
 <?php
+
 return array(
-    // 'an english string' => 'La traduction française de la chaine',
+    'ElasticProduct configuration' => 'Configuration d\'ElasticProduct',
+    'Host' => 'Hôte',
+    'Index prefix' => 'Prefixe de l\'index',
+    'Password' => 'Mot de passe',
+    'Port' => 'Port',
+    'Username' => 'Nom d\'utilisateur',
 );

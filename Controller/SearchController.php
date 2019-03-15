@@ -158,7 +158,7 @@ class SearchController extends BaseFrontController
         }
 
         $body = [
-            "size" => 5000,
+            "size" => 100,
             "query" => [
                 "bool" => [
                     "filter" => $filters,
@@ -291,7 +291,6 @@ class SearchController extends BaseFrontController
         ];
 
         try {
-//            return new JsonResponse($params['body']);
             $response = $client->search($params);
 
             $results = $response['hits']['hits'];
