@@ -33,55 +33,14 @@ class IndexBuildCommand extends ContainerAwareCommand
         $indexationService = $this->getContainer()->get('elastic_product.indexation.service');
         $this->initRequest();
 
-        $client = ElasticProduct::getElasticSearchClient();
+        $indexationService->createIndex();
 
-        $indexName = ElasticProduct::getIndexName();
-
-        $index = [
-            'index' => $indexName
-        ];
-
-        if($client->indices()->exists($index)) {
-            $client->indices()->delete($index);
-        }
-
-        $output->writeln($indexName);
-
-        $index['body'] = [
-            'settings' => [
-                'analysis' => json_decode(file_get_contents(__DIR__.DS.'../Config/analysis.json'), true),
-            ],
-            'mappings' => [
-                $indexName => json_decode(file_get_contents(__DIR__.DS.'../Config/mapping.json'), true),
-            ]
-        ];
-
-        $client->indices()->create($index);
-
-        $maxPerPage = 2000;
+        $productPerPage = 2000;
         $productCount = ProductQuery::create()->count();
-        $nbPage = ceil($productCount / $maxPerPage);
-        $i = 0;
+        $nbPage = ceil($productCount / $productPerPage);
         for ($c = 0; $c < $nbPage; $c++) {
-
-            $products = ProductQuery::create()->limit($maxPerPage)->offset($c*$maxPerPage)->find();
-
-            /** @var Product $product */
-            foreach ($products as $product) {
-                $i++;
-
-                $output->writeln($i);
-                $output->writeln($product->getTitle());
-
-                gc_enable();
-                Propel::disableInstancePooling();
-
-                $indexationService->indexProduct($product);
-
-                $product->clearAllReferences(true);
-                gc_collect_cycles();
-                $output->writeln(memory_get_usage());
-            }
+            $indexationService->indexProducts($productPerPage, $c);
+            $output->writeln($c);
         }
     }
 }

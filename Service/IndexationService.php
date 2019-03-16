@@ -1,19 +1,17 @@
 <?php
 
-
 namespace ElasticProduct\Service;
 
-
 use ElasticProduct\ElasticProduct;
+use Propel\Runtime\Propel;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Thelia\Action\Image;
 use Thelia\Core\Event\Image\ImageEvent;
 use Thelia\Core\Event\TheliaEvents;
-use Thelia\Model\Brand;
 use Thelia\Model\ConfigQuery;
 use Thelia\Model\CountryQuery;
 use Thelia\Model\Product;
-use Thelia\Model\ProductImage;
+use Thelia\Model\ProductQuery;
 use Thelia\Model\ProductSaleElements;
 use Thelia\Model\TaxRule;
 use Thelia\TaxEngine\Calculator;
@@ -25,6 +23,48 @@ class IndexationService
     public function __construct(EventDispatcher $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
+    }
+
+    public function createIndex()
+    {
+        $client = ElasticProduct::getElasticSearchClient();
+
+        $indexName = ElasticProduct::getIndexName();
+
+        $index = [
+            'index' => $indexName
+        ];
+
+        if($client->indices()->exists($index)) {
+            $client->indices()->delete($index);
+        }
+
+        $index['body'] = [
+            'settings' => [
+                'analysis' => json_decode(file_get_contents(__DIR__.DS.'../Config/analysis.json'), true),
+            ],
+            'mappings' => [
+                $indexName => json_decode(file_get_contents(__DIR__.DS.'../Config/mapping.json'), true),
+            ]
+        ];
+
+        $client->indices()->create($index);
+    }
+
+    public function indexProducts($productPerPage, $page)
+    {
+        $products = ProductQuery::create()->limit($productPerPage)->offset($page*$productPerPage)->find();
+
+        /** @var Product $product */
+        foreach ($products as $product) {
+            gc_enable();
+            Propel::disableInstancePooling();
+
+            $this->indexProduct($product);
+
+            $product->clearAllReferences(true);
+            gc_collect_cycles();
+        }
     }
 
     public function indexProduct(Product $product)

@@ -11,6 +11,13 @@
         <default key="_controller">ElasticProduct\Controller\ConfigurationController::saveAction</default>
     </route>
 
+    <route id="elastic_product_index_create" path="/admin/module/ElasticProduct/index/create">
+        <default key="_controller">ElasticProduct\Controller\IndexationController::createIndex</default>
+    </route>
+    <route id="elastic_product_index_products" path="/admin/module/ElasticProduct/index/products/{productPerPage}/{page}">
+        <default key="_controller">ElasticProduct\Controller\IndexationController::indexProducts</default>
+    </route>
+
     <route id="elastic_product_searchable_toggle" path="/admin/module/elasticproduct/searchable/toggle/{type}/{id}">
         <default key="_controller">ElasticProduct\Controller\ConfigurationController::toggleSearchableAction</default>
         <requirement key="id">\d+</requirement>

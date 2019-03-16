@@ -40,7 +40,7 @@
                 {/form}
             </div>
         </div>
-            <div class="row">
+        <div class="row">
                 <div class="col-md-12 general-block-decorator">
                     <div class="alert alert-warning">{intl l="After modifying this you will need to reindex all your catalog for apply changes." d="elasticproduct.bo.default"}</div>
                     <div class="col-md-6">
@@ -101,6 +101,17 @@
                     </div>
                 </div>
             </div>
+        <div class="row">
+            <div class="col-md-12 general-block-decorator">
+                <div class="progress">
+                    <div id="elastic_product_index_all_progress" class="progress-bar progress-bar-striped active" role="progressbar"
+                         aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:0%">
+                        0%
+                    </div>
+                </div>
+                <button id="elastic_product_index_all" class="btn btn-block btn-warning">{intl l="Reindex whole catalog" d="elasticproduct.bo.default"}</button>
+            </div>
+        </div>
     </div>
 
 {/block}
@@ -132,6 +143,45 @@
                     });
                 {/literal}
             });
+
+            var page=0;
+            var productPerPage=500;
+            var url="{url path="/admin/module/ElasticProduct/index/products"}";
+
+            function recursively_ajax(productCount)
+            {
+                $.ajax({
+                    type:"GET",
+                    async:true,
+                    url: url+"/"+productPerPage+"/"+page,
+                    success: function()
+                    {
+                        var pageMax = productCount/productPerPage;
+                        var percent = Math.round((page/pageMax)*100);
+
+                        if (percent >= 100) {
+                            document.getElementById("elastic_product_index_all_progress").style.width = "100%";
+                            document.getElementById("elastic_product_index_all_progress").innerHTML = "{intl l="Finished" d="elasticproduct.bo.default"}";
+                        } else if (percent > 5) {
+                            document.getElementById("elastic_product_index_all_progress").style.width = percent+"%";
+                            document.getElementById("elastic_product_index_all_progress").innerHTML = percent+"%";
+                        }
+
+                        if(page < pageMax){
+                            page++;
+                            recursively_ajax(productCount);
+                        }
+                    }
+                });
+            }
+
+            $("#elastic_product_index_all").on('click', function (event) {
+                document.getElementById("elastic_product_index_all_progress").style.width = "5%";
+                document.getElementById("elastic_product_index_all_progress").innerHTML = "5%";
+                $.get("{url path="/admin/module/ElasticProduct/index/create"}").success(function(response) {
+                    recursively_ajax(response.productCount);
+                });
+            })
 
         });
     </script>
