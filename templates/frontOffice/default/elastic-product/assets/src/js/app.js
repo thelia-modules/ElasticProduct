@@ -94,7 +94,7 @@ class App extends Component {
         }));
 
         attributeFilters.forEach((attributeFilter => {
-            query += '&attributes['+attributeFilter.feature+']='+attributeFilter.value;
+            query += '&attributes['+attributeFilter.attribute+']='+attributeFilter.value;
         }));
 
         if (!updatePriceFilter) {
