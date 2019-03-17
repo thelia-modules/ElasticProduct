@@ -7,14 +7,14 @@ Fast search for your products with ElasticSearch !
 ## Requirements
 
 * Thelia 
-    * Version: >= 2.4   
+    * Version: >= 2.2   
 * ElasticSearch
     * Version: >= 6.4
 
 ## Installation
 
 ```
-composer require thelia/elastic-product-module:~0.0.1
+composer require thelia/elastic-product-module:~0.0.3
 ```
 
 ### Usage
@@ -42,11 +42,12 @@ Put this hook where you want add the search field.
 
 #### Indexation
 
-To index your products there are 2 commands :
+You can index your products with the button in module configuration page.   
+Or a more efficient way is to execute this command `php Thelia elasticproduct:index:build` this will create the index with the mapping and index the whole catalog.   
+You can set a cron with this command to reindex the catalog every month, week or day. Don't execute this command more than once a day because it can take very long time on big catalog.
 
-* For first indexation use `php Thelia elasticproduct:index:build` this will create the index with the mapping and index the whole catalog.
-* Then use `php Thelia elasticproduct:index:queue` this will only index modified products since last indexation.
-
+But if your version of Thelia is >= 2.4.0 you can execute this other command `php Thelia elasticproduct:index:queue`, this will only index modified products since last indexation.
+So you can set a cron with this command every hour.
 
 
 

@@ -5,6 +5,7 @@ namespace ElasticProduct\EventListener;
 use ElasticProduct\Model\ElasticProductIndexationQueueQuery;
 use Propel\Runtime\Event\ActiveRecordEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Thelia\Core\Thelia;
 use Thelia\Model\Event\AttributeAvEvent;
 use Thelia\Model\Event\AttributeAvI18nEvent;
 use Thelia\Model\Event\AttributeCombinationEvent;
@@ -32,6 +33,10 @@ class UpdateListener implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
     {
+        if (version_compare(Thelia::THELIA_VERSION, '2.4.0-alpha2', 'lt')) {
+            return [];
+        }
+
         return array(
             ProductEvent::POST_SAVE  => ['onModelSave', 128],
             ProductI18nEvent::POST_SAVE => ['onModelSave', 128],
