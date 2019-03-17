@@ -16,7 +16,7 @@ Fast search for your products with ElasticSearch !
 ## Installation
 
 ```
-composer require thelia/elastic-product-module:~0.0.3
+composer require thelia/elastic-product-module:~0.0.4
 ```
 
 ### Usage
