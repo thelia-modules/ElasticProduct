@@ -9,6 +9,7 @@ use Thelia\Action\Image;
 use Thelia\Core\Event\Image\ImageEvent;
 use Thelia\Core\Event\TheliaEvents;
 use Thelia\Model\ConfigQuery;
+use Thelia\Model\Country;
 use Thelia\Model\CountryQuery;
 use Thelia\Model\Product;
 use Thelia\Model\ProductQuery;
@@ -172,8 +173,7 @@ class IndexationService
                 'original_price' => $productSaleElements->getPromo() ? doubleval($price->getPrice()) : null
             ];
 
-            $taxCalculator = new Calculator();
-            $taxCalculator->loadTaxRuleWithoutCountry($taxRule, $product);
+            $taxCalculator = $this->getTaxCalculator($taxRule, $product, $taxedCountries);
 
             $taxedPrice = $taxCalculator->getTaxedPrice($price->getPrice());
             $taxedPromoPrice = $taxCalculator->getTaxedPrice($price->getPromoPrice());
@@ -186,6 +186,31 @@ class IndexationService
         }
 
         return array_values($prices);
+    }
+
+    protected function getTaxCalculator($taxRule, $product, $taxedCountries)
+    {
+        $taxCalculator = new Calculator();
+
+        if (method_exists($taxCalculator, 'loadTaxRuleWithoutCountry')) {
+            $taxCalculator->loadTaxRuleWithoutCountry($taxRule, $product);
+
+            return $taxCalculator;
+        }
+
+        $country = null;
+
+        //Fix for thelia <= 2.4.0
+        if (isset($taxedCountries[0])) {
+            $country = CountryQuery::create()->findOneById($taxedCountries[0]);
+        }
+
+        if (null === $country) {
+            $country = Country::getDefaultCountry();
+        }
+
+        $taxCalculator->loadTaxRule($taxRule, $country, $product);
+        return $taxCalculator;
     }
 
     protected function getProductSaleElementsData(ProductSaleElements $productSaleElements)

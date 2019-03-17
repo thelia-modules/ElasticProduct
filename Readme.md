@@ -4,6 +4,8 @@
 
 Fast search for your products with ElasticSearch !
 
+![Demo](./demo.gif?raw=true "Demo")
+
 ## Requirements
 
 * Thelia 
