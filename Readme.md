@@ -4,7 +4,7 @@
 
 Fast search for your products with ElasticSearch !
 
-![Demo](./demo.gif?raw=true "Demo")
+![Demo](https://raw.githubusercontent.com/thelia-modules/ElasticProduct/master/demo.gif "Demo")
 
 ## Requirements
 
