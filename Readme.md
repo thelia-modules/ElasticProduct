@@ -12,6 +12,8 @@ Fast search for your products with ElasticSearch !
     * Version: >= 2.2   
 * ElasticSearch
     * Version: >= 6.4
+    * Plugins:
+        - analysis-icu
 
 ## Installation
 
