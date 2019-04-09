@@ -49,6 +49,30 @@
         "hyphen_replace",
         "html_strip"
       ]
+    },
+    "german_index": {
+      "tokenizer": "index_tokenizer",
+      "filter": [
+        "icu_folding",
+        "lowercase",
+        "stop_de"
+      ],
+      "char_filter": [
+        "hyphen_replace",
+        "html_strip"
+      ]
+    },
+    "german_search": {
+      "tokenizer": "whitespace",
+      "filter": [
+        "icu_folding",
+        "lowercase",
+        "stop_de"
+      ],
+      "char_filter": [
+        "hyphen_replace",
+        "html_strip"
+      ]
     }
   },
   "tokenizer": {
@@ -71,6 +95,10 @@
     "stop_en": {
       "type": "stop",
       "stopwords": "_english_"
+    },
+    "stop_de": {
+      "type": "stop",
+      "stopwords": "_german_"
     },
     "french_elision": {
       "type": "elision",

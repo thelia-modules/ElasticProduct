@@ -53,6 +53,24 @@
       }
     },
     {
+      "german_templates": {
+        "path_match": "*.i18ns.de_DE.*",
+        "mapping": {
+          "type": "text",
+          "fields": {
+            "raw": {
+              "type": "keyword"
+            },
+            "analyzed": {
+              "analyzer": "german_index",
+              "search_analyzer": "german_search",
+              "type": "text"
+            }
+          }
+        }
+      }
+    },
+    {
       "ref":  {
         "match": "ref",
         "mapping": {
