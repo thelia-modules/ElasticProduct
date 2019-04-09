@@ -4,8 +4,7 @@
       "tokenizer": "index_tokenizer",
       "filter": [
         "lowercase",
-        "asciifolding",
-        "french_elision",
+        "icu_folding",
         "stop_en"
       ],
       "char_filter": [
@@ -17,8 +16,7 @@
       "tokenizer": "whitespace",
       "filter": [
         "lowercase",
-        "asciifolding",
-        "french_elision",
+        "icu_folding",
         "stop_en"
       ],
       "char_filter": [
@@ -31,7 +29,8 @@
       "filter": [
         "french_elision",
         "icu_folding",
-        "lowercase"
+        "lowercase",
+        "stop_fr"
       ],
       "char_filter": [
         "hyphen_replace",
@@ -43,7 +42,8 @@
       "filter": [
         "french_elision",
         "icu_folding",
-        "lowercase"
+        "lowercase",
+        "stop_fr"
       ],
       "char_filter": [
         "hyphen_replace",
@@ -70,7 +70,7 @@
     },
     "stop_en": {
       "type": "stop",
-      "stopwords": "_english"
+      "stopwords": "_english_"
     },
     "french_elision": {
       "type": "elision",
