@@ -11,7 +11,7 @@ Fast search for your products with ElasticSearch !
 * Thelia 
     * Version: >= 2.2   
 * ElasticSearch
-    * Version: >= 6.4
+    * Version: >= 6.4 <= 7.0
     * Plugins:
         - analysis-icu
 
