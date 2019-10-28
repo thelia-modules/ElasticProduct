@@ -13,7 +13,9 @@
 namespace ElasticProduct;
 
 use Elasticsearch\ClientBuilder;
+use Propel\Runtime\Connection\ConnectionInterface;
 use Thelia\Core\Template\TemplateDefinition;
+use Thelia\Install\Database;
 use Thelia\Module\BaseModule;
 
 class ElasticProduct extends BaseModule
@@ -21,8 +23,16 @@ class ElasticProduct extends BaseModule
     /** @var string */
     const DOMAIN_NAME = 'elasticproduct';
 
-    const SEARCHABLE_FEATURE_CONFIG_KEY = "searchable_features";
-    const SEARCHABLE_ATTRIBUTE_CONFIG_KEY = "searchable_attributes";
+    /**
+     * @param ConnectionInterface $con
+     */
+    public function postActivation(ConnectionInterface $con = null)
+    {
+        if (!$this->getConfigValue('is_initialized', false)) {
+            $database = new Database($con);
+            $database->insertSql(null, [__DIR__ . "/Config/thelia.sql", __DIR__ . "/Config/insert.sql"]);
+        }
+    }
 
     public static function getElasticSearchClient()
     {
