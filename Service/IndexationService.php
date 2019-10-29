@@ -3,6 +3,7 @@
 namespace ElasticProduct\Service;
 
 use ElasticProduct\ElasticProduct;
+use ElasticProduct\Event\ProductIndexationEvent;
 use Propel\Runtime\Propel;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Thelia\Action\Image;
@@ -105,7 +106,7 @@ class IndexationService
             'product' => $this->getProductData($product),
             'brand' => $this->getBrandData($product),
             'categories' => $this->getCategoriesData($product),
-            'features' => $this->getFeaturesData($product),
+            'features' => $this->getFeaturesData($product)
         ];
 
         $productSaleElementsRelatedBody = [];
@@ -229,7 +230,7 @@ class IndexationService
         ];
     }
 
-    protected function getFeaturesData(Product $product)
+    protected function  getFeaturesData(Product $product)
     {
         $productFeatures = $product->getFeatureProducts();
         $features = [];
@@ -300,16 +301,23 @@ class IndexationService
         $langData = $this->getLangData($product->getProductI18ns(), true, $product, 'product');
         $imageData = $this->getImageData($product->getProductImages(), 'product');
 
-        return [
-            'id' => $product->getId(),
-            'ref' => $product->getRef(),
-            'is_visible' => !!$product->getVisible(),
-            'i18ns' => $langData['i18ns'],
-            'urls' => $langData['urls'],
-            'images' => $imageData,
-            'created_at' => $product->getCreatedAt('Y-m-d H:i:s'),
-            'updated_at' => $product->getUpdatedAt('Y-m-d H:i:s')
-        ];
+        $productIndexationEvent = new ProductIndexationEvent($product);
+        $productIndexationEvent->setProductData(
+            [
+                'id' => $product->getId(),
+                'ref' => $product->getRef(),
+                'is_visible' => !!$product->getVisible(),
+                'i18ns' => $langData['i18ns'],
+                'urls' => $langData['urls'],
+                'images' => $imageData,
+                'created_at' => $product->getCreatedAt('Y-m-d H:i:s'),
+                'updated_at' => $product->getUpdatedAt('Y-m-d H:i:s')
+            ]
+        );
+        $this->eventDispatcher->dispatch(ProductIndexationEvent::GET_PRODUCT_DATA_EVENT, $productIndexationEvent);
+
+
+        return $productIndexationEvent->getProductData();
     }
 
     protected function getLangData($i18ns, $withUrl = false, $model = null,  $viewName = '')
