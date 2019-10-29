@@ -5,6 +5,7 @@ namespace ElasticProduct\Controller;
 
 
 use ElasticProduct\ElasticProduct;
+use ElasticProduct\Event\SearchEvent\SearchFilterEvent;
 use Thelia\Controller\Front\BaseFrontController;
 use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\HttpFoundation\Request;
@@ -35,7 +36,8 @@ class SearchController extends BaseFrontController
 
         $filters = [];
 
-        $filters[] =                         [
+        $filters[] =
+            [
             "term" => [
                 "product.is_visible" => true
             ]
@@ -157,11 +159,16 @@ class SearchController extends BaseFrontController
             ];
         }
 
+        $searchFilterEvent = new SearchFilterEvent($request);
+        $searchFilterEvent->setFilters($filters);
+        $this->dispatch(SearchFilterEvent::GET_SEARCH_FILTER_EVENT, $searchFilterEvent);
+
+
         $body = [
             "size" => 100,
             "query" => [
                 "bool" => [
-                    "filter" => $filters,
+                    "filter" => $searchFilterEvent->getFilters(),
                     "must" => [
                         "bool" => [
                             "should" => [
