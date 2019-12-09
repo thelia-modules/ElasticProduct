@@ -13,4 +13,5 @@ return array(
     'Searchable' => 'Filtrable',
     'Searchable attributes' => 'Déclinaisons filtrables',
     'Searchable features' => 'Caractéristiques filtrables',
+    'Success !' => 'Succés !',
 );

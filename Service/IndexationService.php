@@ -3,7 +3,7 @@
 namespace ElasticProduct\Service;
 
 use ElasticProduct\ElasticProduct;
-use ElasticProduct\Event\ProductIndexationEvent;
+use ElasticProduct\Event\IndexationEvent\ProductIndexationEvent;
 use Propel\Runtime\Propel;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Thelia\Action\Image;
