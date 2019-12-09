@@ -1,6 +1,6 @@
 <?php
 
-namespace ElasticProduct\Event;
+namespace ElasticProduct\Event\IndexationEvent;
 
 use Thelia\Core\Event\ActionEvent;
 use Thelia\Model\Product;

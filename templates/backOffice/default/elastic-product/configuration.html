@@ -102,7 +102,7 @@
                 </div>
             </div>
         <div class="row">
-            <div class="col-md-12 general-block-decorator">
+            <div id="indexation_block" class="col-md-12 general-block-decorator">
                 <div class="progress">
                     <div id="elastic_product_index_all_progress" class="progress-bar progress-bar-striped active" role="progressbar"
                          aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:0%">
@@ -162,6 +162,7 @@
                         if (percent >= 100) {
                             document.getElementById("elastic_product_index_all_progress").style.width = "100%";
                             document.getElementById("elastic_product_index_all_progress").innerHTML = "{intl l="Finished" d="elasticproduct.bo.default"}";
+                            $("#indexation_block").prepend('<div class="alert alert-success">{intl l="Success !" d="elasticproduct.bo.default"}</div>')
                         } else if (percent > 5) {
                             document.getElementById("elastic_product_index_all_progress").style.width = percent+"%";
                             document.getElementById("elastic_product_index_all_progress").innerHTML = percent+"%";
@@ -171,6 +172,10 @@
                             page++;
                             recursively_ajax(productCount);
                         }
+                    },
+                    error: function (jqXHR)
+                    {
+                        $("#indexation_block").prepend('<div class="alert alert-danger">'+jqXHR.statusText+'</div>')
                     }
                 });
             }
