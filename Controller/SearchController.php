@@ -142,6 +142,10 @@ class SearchController extends BaseFrontController
         $textSearches = [];
         $refSearch = [];
         foreach ($searchWords as $searchWord) {
+            if ($searchWord === "") {
+                continue;
+            }
+            
             $textSearches[] = [
                 "multi_match" => [
                     "query" => $searchWord,
