@@ -32,7 +32,7 @@
     "vue-template-compiler": "^2.6.8"
   },
   "dependencies": {
-    "axios": "^0.18.1",
+    "axios": "^0.21.1",
     "babel-polyfill": "^6.26.0",
     "bootstrap-4-grid": "^2.4.0",
     "react": "^16.8.3",
