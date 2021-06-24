@@ -30,7 +30,7 @@ class ElasticProduct extends BaseModule
     {
         if (!$this->getConfigValue('is_initialized', false)) {
             $database = new Database($con);
-            $database->insertSql(null, [__DIR__ . "/Config/thelia.sql", __DIR__ . "/Config/insert.sql"]);
+            $database->insertSql(null, [__DIR__ . "/Config/thelia.sql"]);
         }
     }
 
