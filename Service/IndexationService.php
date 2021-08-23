@@ -87,10 +87,18 @@ class IndexationService
         $productTaxRule = $product->getTaxRule();
         $taxRuleCountries = $productTaxRule->getTaxRuleCountries();
         $taxedCountries = [];
+        $countryByTaxes = [];
+        $countryTaxes = [];
 
         foreach ($taxRuleCountries as $taxRuleCountry) {
+            $countryTaxes[$taxRuleCountry->getCountryId()][] = $taxRuleCountry->getTaxId();
             $taxedCountries[] = $taxRuleCountry->getCountryId();
         }
+
+        foreach ($countryTaxes as $countryId => $taxes) {
+            $countryByTaxes['taxes_'.implode("-", $taxes)][] = $countryId;
+        }
+
 
         $countries = CountryQuery::create()
             ->find();
@@ -117,7 +125,7 @@ class IndexationService
             $productSaleElementsRelatedBody[] = array_merge(
                 $productSaleElementsData,
                 [
-                    'prices' => $this->getPricesData($productSaleElements, $product, $productTaxRule, $taxedCountries, $untaxedCountries),
+                    'prices' => $this->getPricesData($productSaleElements, $product, $productTaxRule, $countryByTaxes, $untaxedCountries),
                     'attributes' => $this->getAttributesData($productSaleElements)
                 ]);
         }
@@ -162,7 +170,7 @@ class IndexationService
         return array_values($attributes);
     }
 
-    protected function getPricesData(ProductSaleElements $productSaleElements, Product $product, TaxRule $taxRule, $taxedCountries = [], $untaxedCountries = [])
+    protected function getPricesData(ProductSaleElements $productSaleElements, Product $product, TaxRule $taxRule, $countryByTaxes = [], $untaxedCountries = [])
     {
         $productPrices = $productSaleElements->getProductPrices();
         $prices = [];
@@ -174,41 +182,28 @@ class IndexationService
                 'original_price' => $productSaleElements->getPromo() ? doubleval($price->getPrice()) : null
             ];
 
-            $taxCalculator = $this->getTaxCalculator($taxRule, $product, $taxedCountries);
+            foreach ($countryByTaxes as $taxIndex => $countries) {
+                $taxCalculator = $this->getTaxCalculator($taxRule, $product, $countries[0]);
 
-            $taxedPrice = $taxCalculator->getTaxedPrice($price->getPrice());
-            $taxedPromoPrice = $taxCalculator->getTaxedPrice($price->getPromoPrice());
+                $taxedPrice = $taxCalculator->getTaxedPrice($price->getPrice());
+                $taxedPromoPrice = $taxCalculator->getTaxedPrice($price->getPromoPrice());
 
-            $prices['taxed']['countries'] = $taxedCountries;
-            $prices['taxed'][$price->getCurrency()->getCode()] = [
-                'price' => $productSaleElements->getPromo() ? doubleval($taxedPromoPrice) : doubleval($taxedPrice),
-                'original_price' => $productSaleElements->getPromo() ? doubleval($taxedPrice) : null
-            ];
+                $prices[$taxIndex]['countries'] = $countries;
+                $prices[$taxIndex][$price->getCurrency()->getCode()] = [
+                    'price' => $productSaleElements->getPromo() ? doubleval($taxedPromoPrice) : doubleval($taxedPrice),
+                    'original_price' => $productSaleElements->getPromo() ? doubleval($taxedPrice) : null
+                ];
+            }
         }
 
         return array_values($prices);
     }
 
-    protected function getTaxCalculator($taxRule, $product, $taxedCountries)
+    protected function getTaxCalculator($taxRule, $product, $countryId)
     {
         $taxCalculator = new Calculator();
 
-        if (method_exists($taxCalculator, 'loadTaxRuleWithoutCountry')) {
-            $taxCalculator->loadTaxRuleWithoutCountry($taxRule, $product);
-
-            return $taxCalculator;
-        }
-
-        $country = null;
-
-        //Fix for thelia <= 2.4.0
-        if (isset($taxedCountries[0])) {
-            $country = CountryQuery::create()->findOneById($taxedCountries[0]);
-        }
-
-        if (null === $country) {
-            $country = Country::getDefaultCountry();
-        }
+        $country = CountryQuery::create()->findOneById($countryId);
 
         $taxCalculator->loadTaxRule($taxRule, $country, $product);
         return $taxCalculator;
