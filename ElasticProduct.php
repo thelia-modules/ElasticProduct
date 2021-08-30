@@ -36,17 +36,8 @@ class ElasticProduct extends BaseModule
 
     public static function getElasticSearchClient()
     {
-        $hosts = [
-            [
-                'host' => self::getConfigValue('host', 'localhost'),
-                'port' => self::getConfigValue('port', '9200'),
-                'user' => self::getConfigValue('username'),
-                'pass' => self::getConfigValue('password')
-            ]
-        ];
-
         $client = ClientBuilder::create()
-            ->setHosts($hosts)
+            ->setHosts(self::getConfigValue('host', 'http://localhost:9200'))
             ->build();
 
         return $client;
