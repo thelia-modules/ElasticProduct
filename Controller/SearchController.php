@@ -18,7 +18,9 @@ class SearchController extends BaseFrontController
     public function searchAction(Request $request)
     {
         $search = $request->get('q');
+        $categories = $request->get('categories', []);
         $category = $request->get('category');
+        $brands = $request->get('brands', []);
         $brand = $request->get('brand');
         $features = $request->get('features', []);
         $attributes = $request->get('attributes', []);
@@ -43,6 +45,20 @@ class SearchController extends BaseFrontController
             ]
         ];
 
+        $categories = (!is_array($categories)) ? [$categories] : $categories;
+
+        $filters[] = [
+            "bool" => [
+                "should" => array_map(function ($category) use ($locale) {
+                    return [
+                        "match" => [
+                            "categories.i18ns.$locale.title.raw" => $category
+                        ]
+                    ];
+                }, $categories)
+            ]
+        ];
+
         if ($category) {
             $filters[] = [
                 "match" => [
@@ -50,6 +66,20 @@ class SearchController extends BaseFrontController
                 ]
             ];
         }
+
+        $brands = (!is_array($brands)) ? [$brands] : $brands;
+
+        $filters[] = [
+            "bool" => [
+                "should" => array_map(function ($brand) use ($locale) {
+                    return [
+                        "match" => [
+                            "brand.i18ns.$locale.title.raw" => $brand
+                        ]
+                    ];
+                }, $brands)
+            ]
+        ];
 
         if ($brand) {
             $filters[] = [
@@ -59,7 +89,8 @@ class SearchController extends BaseFrontController
             ];
         }
 
-        foreach ($features as $feature => $value) {
+        foreach ($features as $feature => $values) {
+            $values = (!is_array($values)) ? [$values] : $values;
             $filters[] = [
                 "nested" => [
                     "path" => "features",
@@ -72,8 +103,14 @@ class SearchController extends BaseFrontController
                                     ]
                                 ],
                                 [
-                                    "match" => [
-                                        "features.values.i18ns.$locale.title.raw" => $value
+                                    "bool" => [
+                                        "should" => array_map(function ($value) use ($locale) {
+                                            return [
+                                                "match" => [
+                                                    "features.values.i18ns.$locale.title.raw" => $value
+                                                ]
+                                            ];
+                                        }, $values)
                                     ]
                                 ]
                             ]
@@ -83,7 +120,8 @@ class SearchController extends BaseFrontController
             ];
         }
 
-        foreach ($attributes as $attribute => $value) {
+        foreach ($attributes as $attribute => $values) {
+            $values = (!is_array($values)) ? [$values] : $values;
             $filters[] = [
                 "nested" => [
                     "path" => "product_sale_elements.attributes",
@@ -96,8 +134,14 @@ class SearchController extends BaseFrontController
                                     ]
                                 ],
                                 [
-                                    "match" => [
-                                        "product_sale_elements.attributes.values.i18ns.$locale.title.raw" => $value
+                                    "bool" => [
+                                        "should" => array_map(function ($value) use ($locale) {
+                                            return [
+                                                "match" => [
+                                                    "product_sale_elements.attributes.values.i18ns.$locale.title.raw" => $value
+                                                ]
+                                            ];
+                                        }, $values)
                                     ]
                                 ]
                             ]
