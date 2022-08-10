@@ -257,9 +257,6 @@ class IndexationService
         $categories = [];
 
         foreach ($productCategories as $category) {
-            if (!$category->isActive()) {
-                continue;
-            }
             $langData = $this->getLangData($category->getCategoryI18ns(), true, $category,  'category');
 
             $categories[] = [
